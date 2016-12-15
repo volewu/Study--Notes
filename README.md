@@ -1,7 +1,8 @@
 # 学习--Notes
 自已收集有关androd的知识点与开源项目
 ##Android APK 瘦身
-1.(Android APK瘦身经验总结)[http://www.jianshu.com/p/bfe44ef18aca]
+1.[http://www.jianshu.com/p/bfe44ef18aca](Android APK瘦身经验总结)
+
 2.[使用Android Studio的lint清除无用的资源文件](http://waychel.com/shi-yong-android-studiode-lintqing-chu-wu-yong-de-zi-yuan-wen-jian/)
 
 ##RecyclerVeiw 学习知识点。
