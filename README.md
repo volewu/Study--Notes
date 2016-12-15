@@ -6,8 +6,7 @@
 2.[使用Android Studio的lint清除无用的资源文件](http://waychel.com/shi-yong-android-studiode-lintqing-chu-wu-yong-de-zi-yuan-wen-jian/)
 
 ##Android 官方 Lambda
-1.方法 ： 
-
+1.方法 ：![](https://github.com/volewu/Study--Notes/blob/master/images/Lamboda.png) 
 
 ##RecyclerVeiw 学习知识点。
 1.[深入浅出 RecyclerView](http://kymjs.com/code/2016/07/10/01)
