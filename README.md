@@ -13,5 +13,8 @@
 
 ##CardView 知识。
 1.[# Android5.0 CardView的使用](http://www.jianshu.com/p/ae9d654599ef#)
+
 2.[Android 使用CardView轻松实现卡片式设计](http://www.jianshu.com/p/573fc14a7ee5)
+
 3.[关于使用 CardView 开发过程中要注意的细节](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1025/3621.html)
+4.[Delightful details: Lift-on-touch animation for CardView](http://vickychijwani.me/cardview-material-response/)
