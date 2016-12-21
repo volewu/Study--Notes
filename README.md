@@ -19,3 +19,13 @@
 3.[关于使用 CardView 开发过程中要注意的细节](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1025/3621.html)
 
 4.[Delightful details: Lift-on-touch animation for CardView](http://vickychijwani.me/cardview-material-response/)
+
+##关于 Android 点击后长生水波的知识。
+1.[Android MaterialDesign之水波点击效果的几种实现方法](http://www.jianshu.com/p/74bfa3338f11)
+
+2.Android 5.0 默认水波纹背景属性,可设置任何View(以下两个属性在5.0以下是默认的灰色效果。)
+
+actionBarItemBackground 5.0以上超出边界圆形水波纹---------android:background="?android:attr/actionBarItemBackground"
+
+selectableItemBackground 5.0以上边界内圆形水波纹---------android:background="?android:attr/selectableItemBackground"
+
