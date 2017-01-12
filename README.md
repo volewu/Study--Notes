@@ -25,7 +25,30 @@
 
 2.Android 5.0 默认水波纹背景属性,可设置任何View(以下两个属性在5.0以下是默认的灰色效果。)
 
-actionBarItemBackground 5.0以上超出边界圆形水波纹---------android:background="?android:attr/actionBarItemBackground"
+actionBarItemBackground 5.0以上超出边界圆形水波纹---------
+android:background="?android:attr/actionBarItemBackground"
 
-selectableItemBackground 5.0以上边界内圆形水波纹---------android:background="?android:attr/selectableItemBackground"
+selectableItemBackground 5.0以上边界内圆形水波纹---------
+android:background="?android:attr/selectableItemBackground"
+
+##RxJava 知识
+扔物线大神的干货（ps：RaJava1.0）
+[给 Android 开发者的 RxJava 详解](http://gank.io/post/560e15be2dca930e00da1083#toc_1)
+
+1.[给初学者的RxJava2.0教程(一)](http://www.jianshu.com/p/464fa025229e)
+
+2.[给初学者的RxJava2.0教程(二)](http://www.jianshu.com/p/8818b98c44e2)
+
+3.[给初学者的RxJava2.0教程(三)](http://www.jianshu.com/p/128e662906af)
+
+4.[给初学者的RxJava2.0教程(四)](http://www.jianshu.com/p/bb58571cdb64)
+
+5.[给初学者的RxJava2.0教程(五)](http://www.jianshu.com/p/0f2d6c2387c9)
+
+6.[给初学者的RxJava2.0教程(六)](http://www.jianshu.com/p/e4c6d7989356)
+
+7.[给初学者的RxJava2.0教程(七)](http://www.jianshu.com/p/9b1304435564)
+
+8.[给初学者的RxJava2.0教程(八)](http://www.jianshu.com/p/a75ecf461e02)
+
 
