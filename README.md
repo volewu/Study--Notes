@@ -1,4 +1,5 @@
 # 学习--Notes
+## 6666666666666666666666666
 自已收集有关androd的知识点与开源项目
 ##Android APK 瘦身
 1.[Android APK瘦身经验总结](http://www.jianshu.com/p/bfe44ef18aca)
