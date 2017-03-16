@@ -12,15 +12,6 @@
 ## RecyclerVeiw 学习知识点。
 1. [深入浅出 RecyclerView](http://kymjs.com/code/2016/07/10/01)
 
-## CardView 知识。
-1. [# Android5.0 CardView的使用](http://www.jianshu.com/p/ae9d654599ef#)
-
-2. [Android 使用CardView轻松实现卡片式设计](http://www.jianshu.com/p/573fc14a7ee5)
-
-3. [关于使用 CardView 开发过程中要注意的细节](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1025/3621.html)
-
-4. [Delightful details: Lift-on-touch animation for CardView](http://vickychijwani.me/cardview-material-response/)
-
 ## 关于 Android 点击后长生水波的知识。
 1. [Android MaterialDesign之水波点击效果的几种实现方法](http://www.jianshu.com/p/74bfa3338f11)
 
@@ -53,6 +44,17 @@
 8. [给初学者的RxJava2.0教程(八)](http://www.jianshu.com/p/a75ecf461e02)
 
 ## Material Design 
-1. 官网资料[面向开发者的 Material Design](https://developer.android.google.cn/training/material/index.html)
+1. 官网资料
+* [面向开发者的 Material Design](https://developer.android.google.cn/training/material/index.html)
 
-2. 动画实现好文[Android Material Design 动画实现](https://www.aswifter.com/2015/08/01/android-material-design-animation/)
+2. 动画实现好文
+* [Android Material Design 动画实现](https://www.aswifter.com/2015/08/01/android-material-design-animation/)
+
+3. ## CardView 知识。
+* [Android5.0 CardView的使用](http://www.jianshu.com/p/ae9d654599ef#)
+
+* [Android 使用CardView轻松实现卡片式设计](http://www.jianshu.com/p/573fc14a7ee5)
+
+* [关于使用 CardView 开发过程中要注意的细节](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1025/3621.html)
+
+* [Delightful details: Lift-on-touch animation for CardView](http://vickychijwani.me/cardview-material-response/)
