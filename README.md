@@ -58,3 +58,9 @@
 * [关于使用 CardView 开发过程中要注意的细节](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1025/3621.html)
 
 * [Delightful details: Lift-on-touch animation for CardView](http://vickychijwani.me/cardview-material-response/)
+
+4. 去掉SrollView、GrdiView、ListView、ViewPager等滑动到边缘的光晕效果
+
+```
+View.setOverScrollMode( View.OVER_SCROLL_NEVER )
+```
