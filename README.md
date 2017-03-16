@@ -7,7 +7,7 @@
 2. [使用Android Studio的lint清除无用的资源文件](http://waychel.com/shi-yong-android-studiode-lintqing-chu-wu-yong-de-zi-yuan-wen-jian/)
 
 ## Android 官方 Lambda
-1. 方法 ：![](https://github.com/volewu/Study--Notes/blob/master/images/Lamboda.png) 
+1. 方法 ： ![](https://github.com/volewu/Study--Notes/blob/master/images/Lamboda.png) 
 
 ## RecyclerVeiw 学习知识点。
 1. [深入浅出 RecyclerView](http://kymjs.com/code/2016/07/10/01)
@@ -50,7 +50,7 @@
 2. 动画实现好文
 * [Android Material Design 动画实现](https://www.aswifter.com/2015/08/01/android-material-design-animation/)
 
-3. ## CardView 知识。
+3. CardView 知识。
 * [Android5.0 CardView的使用](http://www.jianshu.com/p/ae9d654599ef#)
 
 * [Android 使用CardView轻松实现卡片式设计](http://www.jianshu.com/p/573fc14a7ee5)
