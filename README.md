@@ -67,16 +67,29 @@ View.setOverScrollMode( View.OVER_SCROLL_NEVER )
 
 
 ## Android Studio 插件
+
 **1. ADB Idea ：管理 adb 的工具**
-**2. Android ButterKnife Zelezny ：生成 ButterKnife 的插件
+
+**2. Android ButterKnife Zelezny ：生成 ButterKnife 的插件**
+
 **3. GsonFormat ：将 Json 自动转化成类**
+
 **4. Translation ：翻译插件**
+
 **5. WakaTime ：时间管理**
+
 **6. Material Theme UI ：Material 主题插件**
 
+
 ## Chrome 插件
+
 **1. Octotree ：直接在 Chrome 侧边栏打开文件夹一样的查看别人的项目**
+
 **2. Avatars for Github ：在 Github 中看到别人的头像**
+
 **3. Momentum ：新打开一个 Tab 是一张图片**
+
 **4. Vysor ：手机投影**
+
 **5. LastPass ：保存密码**
+
