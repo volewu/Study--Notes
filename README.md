@@ -1,6 +1,6 @@
 # 学习--Notes
 
-[Android APK 瘦身](#插件)
+[Android Studio 插件](#插件)
 
 自已收集有关androd的知识点与开源项目
 ## Android APK 瘦身
