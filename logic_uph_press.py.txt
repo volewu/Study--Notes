@@ -1,0 +1,172 @@
+@restapi.resource('/bu/pins/logic_uph_press')
+class PinsLogicInfo(Resource):
+    def get(self, headers=None):
+        fixture = request.args.get('fixtureId', '')
+        # BU = request.args.get('bu', '')
+        BU = request.args.get('BU', '')
+        pn_info = []
+        use_data_table = ''
+        if fixture[:2] == 'TA':
+            use_data_table = 'ict_detail_result'
+        if fixture[:2] == 'TR':
+            use_data_table = 'ict_detail_result_8100'
+        sql = """select a.*,ifnull(b.mt,'None') as mt from (select board as pn_num from fail_pins where fixture_id = '{0}' GROUP BY board) a
+                 left join
+                 (select board as pn_num, ifnull(min(maintain_time),'None') as mt
+                 from fail_pins where fixture_id = '{0}' and fail_state = 1 and before_retest/before_total_sn >=0.2 
+                 and is_totalsn_conform = 1 GROUP BY board) b on b.pn_num = a.pn_num """.format(
+            fixture)
+        pn_list = Common.FetchDB(sql, BU)
+        # return pn_list
+        for i in pn_list:
+            if i['mt'] == 'None':
+                sql_1 = ''' select ifnull(max(maintain_time),'None') as mt from fail_pins where fixture_id = '{0}'  
+                            and board = '{1}' and fail_state in (2,3) and before_retest/before_total_sn >=0.2 
+                            and is_totalsn_conform = 1'''.format(fixture, i['pn_num'])
+                i['mt'] = Common.FetchDB(sql_1, BU)[0]['mt']
+            pn_info.append([])
+            pn_info[-1].append(i['pn_num'])
+            pn_info[-1].append([])
+            # Total Data
+            boards_qty = '''select count(*) as count from {0} where fixture_id = '{1}' and board = '{2}' and status = 'PASS' '''.format(
+                use_data_table, fixture, i['pn_num'])
+            pn_info[-1][-1].append(Common.FetchDB(boards_qty, BU)[0]['count'])
+
+            retry_times_sql = ''' select (select sum(retest) from {0} where fixture_id = '{1}' and board = '{2}')
+            /(select count(distinct sn) from {0} where fixture_id = '{1}' and board = '{2}') as retry '''.format(
+                use_data_table, fixture, i['pn_num'])
+            retry_times = round(float((Common.FetchDB(retry_times_sql, BU)[0]['retry'])), 2)
+            pn_info[-1][-1].append(retry_times)
+
+            actual_UPH_sql = '''  select ifnull(count(*)/(sum(sub_seconds)/3600),0) as Actual_UPH from
+            (select A.board,A.start_time,A.end_time,TIMESTAMPDIFF(SECOND,A.end_time,B.end_time) sub_seconds from
+            ( select a.*,(@i := @i + 1) as ord_num from {0} a,(select @i := 1) d   where fixture_id = '{1}' and board = '{2}' and status = 'PASS' order by board,end_time  ) as A
+            LEFT JOIN
+            ( select a.*,(@j := @j + 1) as ord_num from {0} a,(select @j := 0) c where fixture_id = '{1}' and board = '{2}' and status = 'PASS' order by board,end_time )as B
+            on A.ord_num=B.ord_num and A.board=B.board) C where sub_seconds <= 1800  '''.format(use_data_table, fixture,
+                                                                                                i['pn_num'])
+            # return actual_UPH_sql
+            actual_UPH = round(float((Common.FetchDB(actual_UPH_sql, BU)[0]['Actual_UPH'])), 2)
+            pn_info[-1][-1].append(actual_UPH)
+
+            retest_times_sql = ''' select (select count(*) from {0} where fixture_id = '{1}' and board = '{2}' and status = 'FAIL')
+            /(select count(distinct sn) from {0} where fixture_id = '{1}' and board = '{2}') as retest '''.format(
+                use_data_table, fixture, i['pn_num'])
+            retest_times = round(float((Common.FetchDB(retest_times_sql, BU)[0]['retest'])), 2)
+            pn_info[-1][-1].append(retest_times)
+
+            sql2 = """select ifnull(convert(avg(total_time),DECIMAL(10,2)),0) as time from (select * from {0} where fixture_id = '{1}' and board = '{2}' and status = 'PASS' limit 200)a""".format(
+                use_data_table, fixture, i['pn_num'])
+            time = Common.FetchDB(sql2, BU)[0]['time']
+            sql3 = """select ifnull(convert((sum(total_time)/count(*)),decimal(10,2)),0) as avg_test_time from (select * from {0} where fixture_id = '{1}' and board = '{2}' limit 200)a where total_time <{3}""".format(
+                use_data_table, fixture, i['pn_num'], time * 3)
+            avg_test_time = Common.FetchDB(sql3, BU)[0]['avg_test_time']
+            sql4 = """select count(*) as count from ICT_Project.fixture where board = '{0}'""".format(i['pn_num'])
+            node_count = Common.FetchDB(sql4, BU)[0]['count']
+            if node_count <= 1500:
+                handling_time = 20
+            elif node_count > 1500 and node_count <= 3000:
+                handling_time = 30
+            elif node_count > 3000:
+                handling_time = 40
+            uph_target = round(3600 / (avg_test_time + handling_time), 2)
+            pn_info[-1][-1].append(str(uph_target))
+            # 判断是否有维护时间
+            if i['mt'] == 'None':
+                if_mt_null = '>='
+                if_mt_null_1 = '<'
+            else:
+                if_mt_null = '<'
+                if_mt_null_1 = '>='
+            # Before Take Action Data
+
+            before_boards_qty = '''select count(*) as count from {0} where fixture_id = '{1}' and board = '{2}' and status = 'PASS' and start_time {3} '{4}' '''.format(
+                use_data_table, fixture, i['pn_num'], if_mt_null, i['mt'])
+            pn_info[-1].append([])
+            pn_info[-1][-1].append(Common.FetchDB(before_boards_qty, BU)[0]['count'])
+
+            before_retry_times_sql = ''' select ifnull((select ifnull(sum(retest),0) from {4} where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}')
+            /(select ifnull(count(distinct sn),0) from {4} where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}'),0) as retry '''.format(
+                fixture, i['pn_num'], if_mt_null, i['mt'], use_data_table)
+            before_retry_times = round(float((Common.FetchDB(before_retry_times_sql, BU)[0]['retry'])), 2)
+            pn_info[-1][-1].append(before_retry_times)
+
+            before_actual_UPH_sql = ''' select ifnull(count(*)/(sum(sub_seconds)/3600),0) as Actual_UPH from
+            (select A.board,A.start_time,A.end_time,TIMESTAMPDIFF(SECOND,A.end_time,B.end_time) sub_seconds from
+            ( select a.*,(@i := @i + 1) as ord_num from {4} a,(select @i := 1) d   where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}' and status = 'PASS' order by board,end_time  ) as A
+            LEFT JOIN
+            ( select a.*,(@j := @j + 1) as ord_num from {4} a,(select @j := 0) c where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}' and status = 'PASS' order by board,end_time )as B
+            on A.ord_num=B.ord_num and A.board=B.board) C where sub_seconds <= 1800 '''.format(fixture, i['pn_num'],
+                                                                                               if_mt_null, i['mt'],
+                                                                                               use_data_table)
+            before_actual_UPH = round(float((Common.FetchDB(before_actual_UPH_sql, BU)[0]['Actual_UPH'])), 2)
+            pn_info[-1][-1].append(before_actual_UPH)
+
+            before_retest_times_sql = ''' select ifnull((select count(*) from {4} where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}' and status = 'FAIL')
+            /(select count(distinct sn) from {4} where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}'),0) as retest '''.format(
+                fixture, i['pn_num'], if_mt_null, i['mt'], use_data_table)
+            before_retest_times = round(float((Common.FetchDB(before_retest_times_sql, BU)[0]['retest'])), 2)
+            pn_info[-1][-1].append(before_retest_times)
+
+            pn_info[-1][-1].append(str(i['mt']))
+
+            # After Take Action Data
+            after_boards_qty = '''select count(*) as count from {4} where fixture_id = '{0}' and board = '{1}' and status = 'PASS'  and start_time {2} '{3}' '''.format(
+                fixture, i['pn_num'], if_mt_null_1, i['mt'], use_data_table)
+            pn_info[-1].append([])
+            pn_info[-1][-1].append(Common.FetchDB(after_boards_qty, BU)[0]['count'])
+
+            after_retry_times_sql = ''' select ifnull((select ifnull(sum(retest),0) from {4} where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}')
+            /(select ifnull(count(distinct sn),0) from {4} where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}'),0) as retry '''.format(
+                fixture, i['pn_num'], if_mt_null_1, i['mt'], use_data_table)
+            after_retry_times = round(float((Common.FetchDB(after_retry_times_sql, BU)[0]['retry'])), 2)
+            pn_info[-1][-1].append(after_retry_times)
+
+            after_actual_UPH_sql = ''' select ifnull(count(*)/(sum(sub_seconds)/3600),0) as Actual_UPH from
+            (select A.board,A.start_time,A.end_time,TIMESTAMPDIFF(SECOND,A.end_time,B.end_time) sub_seconds from
+            ( select a.*,(@i := @i + 1) as ord_num from {4} a,(select @i := 1) d   where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}' and status = 'PASS' order by board,end_time  ) as A
+            LEFT JOIN
+            ( select a.*,(@j := @j + 1) as ord_num from {4} a,(select @j := 0) c where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}' and status = 'PASS' order by board,end_time )as B
+            on A.ord_num=B.ord_num and A.board=B.board) C where sub_seconds <=1800 '''.format(fixture, i['pn_num'],
+                                                                                              if_mt_null_1, i['mt'],
+                                                                                              use_data_table)
+            # return after_actual_UPH_sql
+            after_actual_UPH = round(float((Common.FetchDB(after_actual_UPH_sql, BU)[0]['Actual_UPH'])), 2)
+            pn_info[-1][-1].append(after_actual_UPH)
+            after_retest_times_sql = ''' select ifnull((select count(*) from {4} where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}' and status = 'FAIL')
+            /(select count(distinct sn) from {4} where fixture_id = '{0}' and board = '{1}' and start_time {2} '{3}'),0) as retest '''.format(
+                fixture, i['pn_num'], if_mt_null_1, i['mt'], use_data_table)
+            after_retest_times = round(float((Common.FetchDB(after_retest_times_sql, BU)[0]['retest'])), 2)
+            pn_info[-1][-1].append(after_retest_times)
+
+            # variety
+            if before_retry_times == 0:
+                retry_variety = '0%'
+            else:
+                retry_variety = str(
+                    round(100 * (abs(before_retry_times - after_retry_times) / before_retry_times), 2)) + '%'
+            if before_actual_UPH == 0:
+                uph_variety = '0%'
+            else:
+                uph_variety = str(round(100 * (abs(before_actual_UPH - after_actual_UPH) / before_actual_UPH), 2)) + '%'
+            if before_retest_times == 0:
+                retest_variety = '0%'
+            else:
+                retest_variety = str(
+                    round(100 * (abs(before_retest_times - after_retest_times) / before_retest_times), 2)) + '%'
+            if retry_variety == '100.0%':
+                retry_variety = '0%'
+            if retest_variety == '100.0%':
+                retest_variety = '0%'
+            if uph_variety == '100.0%':
+                uph_variety = '0%'
+            pn_info[-1].append([retry_variety, uph_variety, retest_variety])
+        sql = '''select maintain_time from fail_pins where fixture_id = '{0}' and fail_state = 1
+                 and before_retest/before_total_sn >=0.2 and is_totalsn_conform = 1
+                 order by maintain_time limit 1'''.format(fixture)
+        maintain_time = Common.FetchDB(sql, BU)
+        if len(maintain_time) == 0:
+            sql = '''select maintain_time from fail_pins where fixture_id = '{0}' and fail_state in (2,3)
+                     order by maintain_time desc limit 1 '''.format(fixture)
+            maintain_time = Common.FetchDB(sql, BU)
+        return {'payload': {'pn_info': pn_info,'maintain_time':str(maintain_time[0]['maintain_time'])}, 'errmsg': '', 'status': 1}
